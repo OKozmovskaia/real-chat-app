@@ -7,12 +7,16 @@ const formatMessage = require('./utils/messages');
 const { userJoin, getCurrentUser, userLeave } = require('./utils/users');
 const  Chat  = require("./db/chatSchema");
 const  connect  = require("./db/dbconnection");
+const  chatRouter  = require("./db/chatRoutes");
 
 // init app
 const app = express();
 // init server
 const server = http.createServer(app);
 const io = socketio(server);
+
+//routes
+app.use("/chats", chatRouter);
 
 // client connects
 io.on('connection', socket => {
@@ -52,6 +56,8 @@ io.on('connection', socket => {
   })
 
 });
+
+
 
 // customization for server
 app.use(express.static(path.join(__dirname, 'public')));

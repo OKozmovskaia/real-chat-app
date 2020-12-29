@@ -13,13 +13,33 @@ const socket = io();
 socket.emit('joinUser', { username });
 
 // Message from server
-socket.on('message', message => {
-  console.log(message);
-  outputMessage(message);
-
-  // scroll down in message field
+socket.on('message', data => {
+  console.log(data);
   msgList.scrollTop = msgList.scrollHeight;
 });
+
+// fetch data from database
+
+fetch('/chats')
+  .then(data => {
+    return data.json();
+  })
+  .then(json => {
+    console.log(json);
+    json.map(data => {
+      const liMsg = document.createElement('li');
+      const stringTime = data.date;
+      const objectTime = new Date(stringTime);
+      const timeFormat = objectTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+
+      liMsg.innerHTML = `
+      <p style="margin: 0px; font-weight: bold;">${data.sender}  <span>${timeFormat}</span></p>
+          <p style="margin: 0px;">${data.message}</p>
+          <hr>
+      `;
+      document.getElementById('message-container').appendChild(liMsg);
+    })
+  });
 
 chatForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -37,15 +57,4 @@ chatForm.addEventListener('submit', (e) => {
   e.target.elements[0].value = '';
   e.target.elements[0].focus();
 });
-
-// Output message to DOM
-function outputMessage(message) {
-  const liMsg = document.createElement('li');
-  liMsg.innerHTML = `
-  <p style="margin: 0px; font-weight: bold;">${message. username}  <span>${message.time}</span></p>
-      <p style="margin: 0px;">${message.text}</p>
-      <hr>
-  `;
-  document.getElementById('message-container').appendChild(liMsg);
-};
 
