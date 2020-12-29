@@ -13,33 +13,32 @@ const socket = io();
 socket.emit('joinUser', { username });
 
 // Message from server
-socket.on('message', data => {
-  console.log(data);
-  msgList.scrollTop = msgList.scrollHeight;
-});
+socket.on('message', message => {
+  console.log(message);
 
-// fetch data from database
-
-fetch('/chats')
-  .then(data => {
-    return data.json();
-  })
-  .then(json => {
-    console.log(json);
-    json.map(data => {
-      const liMsg = document.createElement('li');
-      const stringTime = data.date;
-      const objectTime = new Date(stringTime);
-      const timeFormat = objectTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-
-      liMsg.innerHTML = `
-      <p style="margin: 0px; font-weight: bold;">${data.sender}  <span>${timeFormat}</span></p>
-          <p style="margin: 0px;">${data.message}</p>
-          <hr>
-      `;
-      document.getElementById('message-container').appendChild(liMsg);
+  // fetch data from database
+    fetch('/chats')
+    .then(data => {
+      return data.json();
     })
-  });
+    .then(json => {
+      console.log(json);
+      json.map(data => {
+        const liMsg = document.createElement('li');
+        const stringTime = data.date;
+        const objectTime = new Date(stringTime);
+        const timeFormat = objectTime.toLocaleString('en-US', { day: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric', hour12: true });
+
+        liMsg.innerHTML = `
+        <p><span id="username-field">${data.sender}</span>${timeFormat}</p>
+            <p id="text-msg">${data.message}</p>
+        `;
+        document.getElementById('message-container').appendChild(liMsg);
+      })
+      msgList.scrollTop = msgList.scrollHeight;
+    });
+  
+});
 
 chatForm.addEventListener('submit', (e) => {
   e.preventDefault();
