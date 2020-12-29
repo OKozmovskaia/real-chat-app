@@ -61,5 +61,5 @@ io.on('connection', socket => {
 
 // customization for server
 app.use(express.static(path.join(__dirname, 'public')));
-const PORT = 3000 || process.env.PORT;
+const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
